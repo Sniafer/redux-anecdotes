@@ -12,6 +12,13 @@ export const removeNotification = () => {
   };
 };
 
+export const setNotification = (notification, time) => {
+  return async (dispatch) => {
+    await dispatch(addNotification(notification));
+    setTimeout(async () => await dispatch(removeNotification()), time * 1000);
+  };
+};
+
 const notificationReducer = (state = "", action) => {
   switch (action.type) {
     case "NOTIFICATION":
