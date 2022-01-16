@@ -7,9 +7,9 @@ import {
 
 const Anecdote = ({ anecdote }) => {
   const dispatch = useDispatch();
-  const vote = (id) => {
-    console.log("vote", id);
-    dispatch(addVote(id));
+  const vote = async (anecdote) => {
+    console.log("vote", anecdote.id);
+    dispatch(addVote(anecdote.id));
     dispatch(addNotification(`You voted for "${anecdote.content}"`));
     setTimeout(() => dispatch(removeNotification()), 5000);
   };
@@ -19,7 +19,7 @@ const Anecdote = ({ anecdote }) => {
       <div>{anecdote.content}</div>
       <div>
         has {anecdote.votes}
-        <button onClick={() => vote(anecdote.id)}>vote</button>
+        <button onClick={() => vote(anecdote)}>vote</button>
       </div>
     </div>
   );
