@@ -12,19 +12,47 @@ export const removeNotification = () => {
   };
 };
 
-export const setNotification = (notification, time) => {
-  return async (dispatch) => {
-    await dispatch(addNotification(notification));
-    setTimeout(async () => await dispatch(removeNotification()), time * 1000);
+const clearNotification = (timeout) => {
+  return {
+    type: "CLEAR_NOTIFICATION",
+    data: timeout,
   };
 };
 
-const notificationReducer = (state = "", action) => {
+export const setNotification = (notification, time) => {
+  return async (dispatch) => {
+    await dispatch(addNotification(notification));
+    const timeout = setTimeout(
+      async () => await dispatch(removeNotification()),
+      time * 1000
+    );
+    await dispatch(clearNotification(timeout));
+  };
+};
+
+const notificationReducer = (
+  state = { notification: null, timoutID: null },
+  action
+) => {
   switch (action.type) {
     case "NOTIFICATION":
-      return action.data;
+      if (state.timoutID) {
+        clearTimeout(state.timoutID);
+      }
+      return {
+        notification: action.data,
+        timoutID: null,
+      };
     case "REMOVE":
-      return action.data;
+      return {
+        notification: null,
+        timoutID: null,
+      };
+    case "CLEAR_NOTIFICATION":
+      return {
+        notification: state.notification,
+        timoutID: action.data,
+      };
     default:
       return state;
   }
